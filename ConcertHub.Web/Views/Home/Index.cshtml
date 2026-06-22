@@ -1,0 +1,108 @@
+@model CheckoutPageViewModel
+
+@{
+    ViewData["Title"] = "ConcertHub Checkout";
+}
+
+<section class="checkout-shell">
+    <div class="checkout-copy">
+        <span class="eyebrow">ConcertHub.Web</span>
+        <h1>Оплата квитків</h1>
+        <p>Платіж проходить тільки якщо секретний токен еквайрингу доступний через безпечну конфігурацію.</p>
+
+        <div class="secret-status @(Model.IsPaymentSecretConfigured ? "is-ready" : "is-blocked")">
+            <span></span>
+            @(Model.IsPaymentSecretConfigured ? "Payment secret loaded" : "Payment secret missing")
+        </div>
+    </div>
+
+    <form asp-action="Pay" method="post" class="checkout-form">
+        @Html.AntiForgeryToken()
+
+        <div asp-validation-summary="ModelOnly" class="validation-summary"></div>
+
+        <div class="form-grid">
+            <label>
+                <span>Концерт</span>
+                <input asp-for="Payment.ConcertName" readonly />
+            </label>
+
+            <label>
+                <span>Тип квитка</span>
+                <select asp-for="Payment.TicketType" data-ticket-select>
+                    <option value="Standard" data-price="89">Standard - 89 EUR</option>
+                    <option value="Fan Zone" data-price="129">Fan Zone - 129 EUR</option>
+                    <option value="Backstage" data-price="159">Backstage - 159 EUR</option>
+                </select>
+                <span asp-validation-for="Payment.TicketType" class="field-validation"></span>
+            </label>
+
+            <label>
+                <span>Кількість</span>
+                <input asp-for="Payment.Quantity" min="1" max="8" data-ticket-quantity />
+                <span asp-validation-for="Payment.Quantity" class="field-validation"></span>
+            </label>
+
+            <label>
+                <span>Покупець</span>
+                <input asp-for="Payment.CustomerName" placeholder="Vitalii" autocomplete="name" />
+                <span asp-validation-for="Payment.CustomerName" class="field-validation"></span>
+            </label>
+
+            <label class="span-2">
+                <span>Email</span>
+                <input asp-for="Payment.Email" placeholder="you@example.com" autocomplete="email" />
+                <span asp-validation-for="Payment.Email" class="field-validation"></span>
+            </label>
+        </div>
+
+        <div class="payment-footer">
+            <div>
+                <span class="total-label">До сплати</span>
+                <strong data-ticket-total>@Model.Payment.Total.ToString("0.00") EUR</strong>
+            </div>
+
+            <button type="submit">Оплатити квитки</button>
+        </div>
+    </form>
+</section>
+
+<section class="security-strip">
+    <div>
+        <strong>User Secrets</strong>
+        <span>Локальний токен не зберігається у файлах проекту.</span>
+    </div>
+    <div>
+        <strong>Azure Key Vault</strong>
+        <span>Production-секрет читається через Managed Identity.</span>
+    </div>
+    <div>
+        <strong>Application Insights</strong>
+        <span>Успішна оплата пишеться в інформаційний лог.</span>
+    </div>
+</section>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+    <script>
+        (() => {
+            const select = document.querySelector("[data-ticket-select]");
+            const quantity = document.querySelector("[data-ticket-quantity]");
+            const total = document.querySelector("[data-ticket-total]");
+
+            if (!select || !quantity || !total) {
+                return;
+            }
+
+            const renderTotal = () => {
+                const price = Number(select.selectedOptions[0]?.dataset.price || 0);
+                const count = Math.max(1, Number(quantity.value || 1));
+                total.textContent = `${(price * count).toFixed(2)} EUR`;
+            };
+
+            select.addEventListener("change", renderTotal);
+            quantity.addEventListener("input", renderTotal);
+            renderTotal();
+        })();
+    </script>
+}

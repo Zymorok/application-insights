@@ -1,0 +1,16 @@
+@model ErrorViewModel
+
+@{
+    ViewData["Title"] = "Помилка";
+}
+
+<section class="success-shell">
+    <span class="eyebrow">Request failed</span>
+    <h1>Сталася помилка</h1>
+    <p>Запит не вдалося виконати. Перевірте налаштування секретів і повторіть спробу.</p>
+
+    @if (Model.ShowRequestId)
+    {
+        <p><strong>Request ID:</strong> <code>@Model.RequestId</code></p>
+    }
+</section>
