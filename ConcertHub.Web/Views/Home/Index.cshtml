@@ -12,7 +12,7 @@
 
         <div class="secret-status @(Model.IsPaymentSecretConfigured ? "is-ready" : "is-blocked")">
             <span></span>
-            @(Model.IsPaymentSecretConfigured ? "Payment secret loaded" : "Payment secret missing")
+            @(Model.IsPaymentSecretConfigured ? "Платіжний секрет завантажено" : "Платіжний секрет відсутній")
         </div>
     </div>
 
@@ -65,21 +65,6 @@
             <button type="submit">Оплатити квитки</button>
         </div>
     </form>
-</section>
-
-<section class="security-strip">
-    <div>
-        <strong>User Secrets</strong>
-        <span>Локальний токен не зберігається у файлах проекту.</span>
-    </div>
-    <div>
-        <strong>Azure Key Vault</strong>
-        <span>Production-секрет читається через Managed Identity.</span>
-    </div>
-    <div>
-        <strong>Application Insights</strong>
-        <span>Успішна оплата пишеться в інформаційний лог.</span>
-    </div>
 </section>
 
 @section Scripts {

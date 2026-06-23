@@ -58,7 +58,7 @@ public class HomeController : Controller
 
             ModelState.AddModelError(
                 string.Empty,
-                "Платіжний секрет не налаштовано. Додайте PaymentSettings:ApiSecretToken через User Secrets або Azure Key Vault.");
+                "Платіжний секрет не налаштовано. Зверніться до адміністратора сайту.");
 
             return View("Index", CreateCheckoutPage(payment));
         }
